@@ -1,3 +1,5 @@
+![My image](images/grok-image-b60b7810-5ab5-45c4-8e2d-9376b9eff4b8.jpg)
+
 # Trading Desk — v3
 
 A research-first project for testing models, memory, and bounded AI decision support in equities and spot crypto. **Start with daily equities on a laptop. Real broker submission is not implemented and remains blocked.**
