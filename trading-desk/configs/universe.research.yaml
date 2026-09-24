@@ -1,0 +1,14 @@
+mode: research
+# Keep this tiny on a laptop. Expand only after the pipeline is honest.
+equities:
+  - SPY
+  - QQQ
+  - IWM
+  - AAPL
+  - MSFT
+  - NVDA
+crypto: []
+start: "2018-01-01"
+# end omitted = today
+benchmark: SPY
+primary_timeframe: 1d

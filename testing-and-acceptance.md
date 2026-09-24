@@ -13,7 +13,7 @@ uv run --no-sync ruff check src tests
 uv run --no-sync desk-research --help
 ```
 
-Current reviewed environment: macOS, Python 3.12, locked core/dev/graph dependencies. The expanded suite has **71 tests**. Test fixtures redirect runtime/config state into temporary directories and reject Python socket connection attempts. This is a test guard, not an OS-level network sandbox; native SDK/network isolation belongs in integration infrastructure. A synthetic research pipeline and separate-process graph restart avoid dependence on downloaded prices.
+Current reviewed environment: macOS, Python 3.12, locked core/dev/graph dependencies. The pre-update baseline had **71 tests**; the expanded portfolio/simulator suite is counted by the current test run. Test fixtures redirect runtime/config state into temporary directories and reject Python socket connection attempts. This is a test guard, not an OS-level network sandbox; native SDK/network isolation belongs in integration infrastructure. A synthetic research pipeline and separate-process graph restart avoid dependence on downloaded prices.
 
 From the outer pack:
 
@@ -43,9 +43,24 @@ Pack validation checks Python/TOML syntax, local Markdown links/fences, document
 
 The original 42 tests passed before hardening. Added regressions demonstrated 18 failures against the original behavior (15 research/risk/book cases and 3 graph cases) before the targeted fixes. Later tests extend coverage rather than implying all were initially failing. No production account or broker order was used.
 
-## Required but not yet implemented acceptance
+## Portfolio-first regression coverage
 
-These are development gates, not skipped green tests. Create test cases alongside each feature and keep the associated requirement BLOCKED until they pass.
+Additional offline suites cover:
+
+| Suite | Implemented assertions |
+|---|---|
+| `test_portfolio.py` | Cash preservation, immutable/deterministic targets, invalid weights, inverse-volatility allocation, reduce-only scaling, exits/sell ordering and missing/stale/future marks |
+| `test_artifacts.py` | Immutable snapshots, model approval, digest/schema rejection, mature-label training, supplied holiday sessions, known-at membership, current inference without fallback and missing/incomplete focus data |
+| `test_ledger.py` | Partial fills, fees, exits, cashflow-adjusted session P&L, duplicate/conflicting IDs, reservations across connections, expiry/policy/HALT/cost rejection, UNKNOWN blocking, cancellation, reconnect and audit-failure rollback |
+| `test_decisions.py` | Structured evidence/missing-feature flags, identical-input direct/graph target/proposal/risk parity, future/open lesson exclusion |
+| `test_paper_cli.py` | End-to-end session/plan/approve/fill/book flow, no side effects from a plan, explicit reviewer requirement and simulator statistics |
+| `test_reports.py` | Read-only escaped HTML, disabled sentiment boundary, availability rejection and bounded shadow requests |
+
+These tests exercise local simulator guarantees, not broker cancel/fill races, external authorization, statistical alpha or operating observation. The historical 71-test suite remains; the total count should be taken from the current full test run.
+
+## Remaining admission acceptance
+
+These are full admission gates, not skipped green tests. New local foundations cover parts of DATA/MOD/RISK/EXEC, but the complete requirements remain BLOCKED until their remaining venue, recovery, evidence and observation conditions pass. Keep that distinction when extending tests.
 
 | Requirement | Positive case | Mandatory negative/fault cases | Gate |
 |---|---|---|---|

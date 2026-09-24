@@ -1,0 +1,45 @@
+name: ci
+
+# No network to brokers or LLMs. Tests are offline: they use synthetic data,
+# tmp SQLite, and LangGraph's in-memory saver.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Pin Python
+        run: uv python install 3.12
+
+      - name: Sync deps (dev + graph)
+        run: uv sync --locked --extra dev --extra graph
+
+      - name: Lint
+        run: uv run --no-sync ruff check src tests
+
+      - name: Test
+        run: uv run --no-sync pytest -q
+
+      - name: Leakage linter smoke
+        run: |
+          uv run --no-sync python - <<'PY'
+          import numpy as np, pandas as pd
+          from desk.leakage import lint_panel
+          n=60; close=pd.Series(100+np.arange(n,dtype=float))
+          fwd=close.shift(-5)/close-1.0
+          df=pd.DataFrame({"symbol":["AAA"]*n,"date":pd.date_range("2020-01-01",periods=n),
+                           "Close":close.values,"fwd_ret":fwd.values})
+          rep=lint_panel(df,horizon=5)
+          assert rep.ok, rep.violations
+          print("leakage linter OK")
+          PY

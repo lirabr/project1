@@ -33,7 +33,9 @@ START -> snapshot -> pick_next -> retrieve -> debate_pm -> risk_gate
 
 When no cards remain, `pick_next` routes to END. `debate_pm` combines bull/bear/PM, trust sizing, optional prose rewrite, and structured auditor checks. `paper_fill` checks approval age and re-runs risk before applying a local fill. Per-card fields are reset so a later rejection cannot inherit `submitted=True`. Graph order counting includes prior submitted decisions.
 
-The graph does not contain the heartbeat conditional edge described in historical material. `heartbeat` is a separate diagnostic; there is no scheduler or intraday feed in this pack. Direct `cycle` and graph share helpers, but they duplicate orchestration and are not guaranteed semantically identical. A Phase 2 shared application service and parity tests are required.
+The graph does not contain the heartbeat conditional edge described in historical material. `heartbeat` is a separate diagnostic; there is no scheduler or intraday feed in this pack. Direct `cycle` and graph now share `decisions.decide()`, projected-risk evaluation, target construction and decision-time lesson filtering, with an identical-input parity regression. They still have different orchestration/approval/logging paths; this is not full execution parity.
+
+Snapshot state now includes the immutable portfolio-target payload and marked target equity. Missing held-symbol marks fail rather than silently valuing those positions at zero. Requested allocations preserve cash and are not approvals. The separate `paper` CLI provides durable orders, reservations, partial buys/sells and session accounting; graph `paper_fill` remains the legacy immediate-close demonstration. Do not connect a broker to that node.
 
 ## State and storage
 
@@ -52,7 +54,7 @@ The default saver holds a live SQLite connection for the invocation and closes i
 ## Revalidation and replay limits
 
 - Risk and fill nodes are plain Python. The name assertions in the builder are smoke checks, not proof of least privilege or replay safety.
-- HALT and changed caps are re-read before a toy fill. The underlying book is still cost-valued and its P&L is not true session P&L; no current quote binding is supplied.
+- HALT and changed caps are re-read before a toy fill. Risk exposure now uses supplied snapshot marks and pending reservations, but the legacy loss input is not true session P&L and no current quote binding is supplied. The durable `paper` engine has separate session/mark/approval rules.
 - Fill IDs protect repeated economic application at the local book boundary. They do not make episode/vector/log writes exactly-once, nor create atomic risk reservations across concurrent processes.
 - Replaying/forking a checkpoint is not a new authorization. Experiments must use a separate state store and non-submitting execution adapter.
 - A failure after a fill but before episode/checkpoint commit requires inspection/reconciliation. Never resolve it by creating a new thread and blindly approving again.
@@ -62,7 +64,7 @@ Keep only one desk writer. The CLI raises its recursion limit to accommodate the
 
 ## Target service extraction
 
-Make both orchestration paths call a shared service taking immutable evidence/config plus explicit clock/store ports. The graph should emit an intent and wait for an authorization service, not own broker credentials. Execution owns outbox dispatch/reconciliation. Use a durable approval record keyed to intent/account/config hash and expiry, not a bare `"approve"` string as production authorization.
+The paths now share deterministic decision/allocation/risk helpers. Continue extracting orchestration behind a service taking immutable evidence/config plus explicit clock/store ports; helper parity is not a substitute for full lifecycle parity. The graph should emit an intent and wait for an authorization service, not own broker credentials. Execution owns outbox dispatch/reconciliation. Use a durable approval record keyed to intent/account/config hash and expiry, not a bare `"approve"` string as production authorization.
 
 If later splitting bull/bear nodes, add a real barrier for convergence, for example `add_edge(["bull", "bear"], "pm")` with the appropriate state reducers. Do not assume two independent incoming edges always provide the barrier semantics needed across retries/unequal branches. Keep risk serialized against the authoritative portfolio.
 

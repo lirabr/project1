@@ -4,7 +4,7 @@
 
 ## Current versus target
 
-The starter has deterministic model/bull/bear/PM reports, provenance checks, a risk gate, SQLite episodes, a buy-only internal book, and optional graph approvals. It is **not yet a realistic paper broker**. It fills immediately at the snapshot close, has no sell/exit lifecycle, values positions at cost, and feeds since-entry unrealized P&L into a setting named daily loss. Missing marks are ignored. `reflect` annotates an episode but does not liquidate the book.
+The starter has two explicitly different paths. Legacy `cycle --submit`/graph approval still creates immediate-close toy buys and uses since-entry loss, not certified session P&L. The new `paper` CLI uses a separate durable order/fill/session engine over the local book: fresh marks, buys/sells, partial fills, fees, cash/share reservations, cancellation, UNKNOWN blocking, and atomic fill/event writes. Session P&L is marked equity change net of cashflows from an explicit persisted baseline. Neither path is a realistic exchange or broker adapter; `reflect` still annotates episodes rather than consuming completed ledger trades.
 
 Do not use current paper returns as promotion evidence. Those gaps are Phase 2 development work, not optional polish.
 
@@ -20,7 +20,7 @@ uv run --no-sync desk-research book
 uv run --no-sync desk-research memory AAPL
 ```
 
-Expect `data/artifacts/desk.sqlite` and `desk_log.md`; a fresh default book is empty. Card output identifies the strategy used. OOS scores are used only on an exact date match; fallback SMA is a diagnostic, not approved current model inference. The metadata registry does not govern this path.
+Expect `data/artifacts/desk.sqlite`, `desk_log.md`, and `portfolio_target.json`; a fresh default book is empty. Card output identifies strategy/model/data provenance. `rules` mode explicitly uses SMA by default. `approved` mode requires a locally reviewed frozen model and has no fallback; `replay` requires an exact-date OOS score. The old metadata registry does not govern inference.
 
 ## 2. Prove rejection without changing caps
 
@@ -35,7 +35,7 @@ Expect no fills and kill-switch rejection. Inspect before deliberately clearing:
 uv run --no-sync desk-research halt --clear
 ```
 
-HALT blocks new intents under the configured file path; it does not cancel orders or flatten positions. Avoid changing custom kill-switch paths: the legacy `halt` CLI writes its standard artifact path, while the gate reads its config path. Unifying that configuration is part of Phase 2.
+HALT blocks new intents/fills under the configured file path; it does not cancel orders or flatten positions. CLI and risk paths now share the same resolver, including alternate data directories and selected risk configs. Verify that profile explicitly before relying on it.
 
 ## 3. Optional graph demonstration
 
@@ -48,9 +48,11 @@ A graph pauses only if a proposal passes. Use a new thread ID for new work; resu
 
 Read [LangGraph details](langgraph-integration.md). A checkpoint is not a transaction spanning fill and episode. Do not run concurrent desk processes.
 
-## 4. Implement the paper accounting foundation
+## 4. Exercise the durable paper foundation
 
-In order, with failing tests first:
+Use the [starter README workflow](trading-desk/README.md#durable-internal-paper-workflow): explicit session baseline → target → dry plan → per-order approval/reservation → simulated partial fill → marked book. `paper fill` supports both buys and sells from approved plans; `paper cancel` releases an internal remainder. This is separate from legacy graph fills and never contacts a venue. Use fresh isolated state rather than importing old demonstration returns as real executions.
+
+Foundations for marked accounting, reservations, partial fills/fees, local approval binding, and atomic events are implemented and regression-tested. The following remain the full acceptance contract, with real feed/venue semantics and evidence still required:
 
 1. Separate immutable decision episodes from orders/fills/ledger. Implement buy, sell/reduce, cancel, reject, partial-fill, and fee events with unique IDs.
 2. Reconstruct cash and quantities from the ledger; support lot cost and realized P&L. Mark every open position, including symbols removed from focus. Missing/stale marks mean UNKNOWN and block new exposure.
@@ -61,13 +63,13 @@ In order, with failing tests first:
 7. Extract a shared application service so direct and graph paths cannot drift. Inject clock/config/store instead of reading mutable globals at every node.
 8. Make ledger updates and event/outbox writes atomic. Repeated execution IDs cannot duplicate cash/quantity or silently change their payload.
 
-See [contracts](requirements-and-contracts.md) for fields and order states. No `reconcile` or `sell` CLI exists yet; implement and test those interfaces rather than trying undocumented commands.
+See [contracts](requirements-and-contracts.md) for simulator versus broker order states. Internal sells use `paper plan`/`paper approve`/`paper fill`; no standalone broker `sell` or `reconcile` command exists. UNKNOWN cannot be cleared by pretending it was cancelled; preserve evidence and resolve it through a future reviewed reconciliation implementation.
 
 ## 5. Evidence and observation
 
 After the accounting/replay gate passes, run at least **20 equity sessions** prospectively. Save each snapshot and policy/model identity. Daily: refresh/validate inputs, reconcile, run one scheduled cycle, review rejects, mark the book, check limits, export evidence. Add historical shock and outage replays if no unusual session occurs naturally. Count observed and replayed sessions separately.
 
-Reflection is admitted only when an executed trade really closes or a separately defined counterfactual horizon matures. Keep those outcome types separate. Do not label a mark as realized R without a declared initial-risk denominator. Until the ledger exists, `reflect` remains a legacy diagnostic and must not drive promotion.
+Reflection is admitted only when an executed trade really closes or a separately defined counterfactual horizon matures. Keep those outcome types separate. Do not label a mark as realized R without a declared initial-risk denominator. Until reflection is connected to verified completed ledger outcomes, `reflect` remains a legacy diagnostic and must not drive promotion.
 
 ## Tests and exit gate
 

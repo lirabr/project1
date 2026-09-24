@@ -1,0 +1,8 @@
+mode: research
+equities: []
+crypto:
+  - BTC-USD
+  - ETH-USD
+start: "2018-01-01"
+benchmark: BTC-USD
+primary_timeframe: 1d

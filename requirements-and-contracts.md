@@ -1,6 +1,6 @@
 # Requirements and boundary contracts
 
-This is the implementation contract for the target system. The dataclasses in the starter are intentionally smaller and do not provide runtime type validation automatically. See the [capability register](trading-agents-architecture.md) before treating a field/control as implemented.
+This is the implementation contract for the target system. The starter schemas implement only a subset: `PortfolioTarget` and simulator boundaries validate their invariants explicitly, while legacy dataclasses remain smaller and do not automatically enforce all runtime constraints. See the [capability register](trading-agents-architecture.md) before treating a field/control as implemented.
 
 ## Required invariants
 
@@ -45,6 +45,16 @@ Immutable artifacts include `artifact_id`, content digest, source revision, depe
 | DecisionEpisode | Situation snapshot ID, proposal/gate/approval IDs, evidence/citation set and eventual outcome link; an intent is not an executed trade |
 | Outcome / Reflection | Executed or counterfactual type, entry/exit/fill IDs, return after costs, realized P&L, initial risk if R-multiple used, close-only versus high/low excursion definition, outcome availability and lesson |
 | PolicyRelease | Typed bounds, digest, effective time, evidence/approver, previous version; separate from explanatory markdown |
+
+## Implemented portfolio and simulator subset
+
+`PortfolioTarget` validates nonnegative finite weights totaling at most one, explicit residual cash, timezone-aware decision/execution bounds, and lineage. Its mapping is immutable and its canonical hash identifies the whole requested allocation. `PlannedOrder` identities bind target, symbol, direction, quantity and reference price. This interface is shared by allocation research and the decision service; it does not grant execution authority.
+
+The durable `paper` simulator binds each approval to target ID, order ID, risk-policy digest, reviewer, expiry and all-in cost allowance. It serializes reservations with SQLite `BEGIN IMMEDIATE`, handles buy/sell partial fills and average-cost accounting, and commits each fill and its audit event together. Reusing an ID with changed economic payload is rejected. Session baselines and cashflow offsets survive reconnects. Its order states are `OPEN`, `PARTIAL`, `FILLED`, `CANCELLED`, and `UNKNOWN`; rejection occurs before insertion and expiry blocks fills without silently releasing reservations. UNKNOWN requires investigation and has no automatic resolution API.
+
+These are local single-environment simulator contracts, **not completion of AUTH-1/EXEC-1/EXEC-2**. Missing work includes authenticated identities, account/environment binding, revocation, exact decimal/lot precision, broker acknowledgments/outbox/reconciliation, cancel-fill races and full event-based recovery. Legacy graph approvals remain a separate immediate-close demonstration. Never feed real broker fills into the simulator's rejection-on-cancel/expiry API; actual external fills must be reconciled even after local authorization expires.
+
+Model artifacts bind serialized bytes, feature definitions, model source and runtime versions. Local approval records bind model ID and a human-reviewed evidence-file digest. Source snapshots and research runs are retained by identity, but hashes are not signatures and the repository does not provide external trusted retention or statistical promotion certification.
 
 ## Target order state machine
 

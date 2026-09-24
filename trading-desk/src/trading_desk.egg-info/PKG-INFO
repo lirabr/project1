@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: trading-desk
+Version: 0.3.0
+Summary: Trading desk: research lab, paper desk, memory, risk gate, optional LangGraph
+Requires-Python: <3.13,>=3.12
+Requires-Dist: pandas>=2.2
+Requires-Dist: numpy>=2.0
+Requires-Dist: scikit-learn>=1.5
+Requires-Dist: yfinance>=0.2.40
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: python-dotenv>=1.0
+Requires-Dist: joblib>=1.4
+Requires-Dist: pyarrow>=16.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3; extra == "dev"
+Requires-Dist: ruff>=0.6; extra == "dev"
+Provides-Extra: tracking
+Requires-Dist: mlflow>=2.16; extra == "tracking"
+Provides-Extra: graph
+Requires-Dist: langgraph>=0.2.60; extra == "graph"
+Requires-Dist: langgraph-checkpoint-sqlite>=2.0; extra == "graph"

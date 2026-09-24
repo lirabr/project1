@@ -32,6 +32,14 @@ uv run --no-sync desk-research book
 
 No scheduled job is installed by the pack. Laptop sleep, internet failure, missing data and graph expiry must not be treated as successful runs.
 
+## Durable simulator routine
+
+Use a dedicated `DESK_DATA_DIR` and, when needed, `DESK_CONFIG_DIR`. At the declared session boundary, initialize `paper session` with complete fresh marks. Generate a versioned portfolio target, inspect `paper plan`, approve a specific order with reviewer/cost allowance, and feed explicit simulated fills. Inspect `paper book --marks ... --session ...` for marked equity, net-of-cashflow session P&L, reserved resources and fill/fee statistics. Full formats are in the [starter README](trading-desk/README.md#durable-internal-paper-workflow).
+
+These commands do not observe a broker. Do not relabel old marks as current, assume pending sale proceeds are cash, reset a session to hide a loss, or mix legacy toy fills with a certification dataset. UNKNOWN preserves reservations and blocks new buys; retain evidence rather than deleting state. A ledger event write failure rolls back the simulated fill. Research reports are available with `desk-research report` and contain no execution controls.
+
+Model artifacts and snapshots are trusted-local executable/data inputs. Preserve manifests and approved evidence separately, and never load an arbitrary downloaded joblib file. Model approval is local review, not authentication or live admission.
+
 ## Stop procedure
 
 Current default-path command:
@@ -40,7 +48,7 @@ Current default-path command:
 uv run --no-sync desk-research halt
 ```
 
-Inspect/reconcile before any intentional `halt --clear`. With custom state/risk paths, confirm that the file written by the CLI is the same one consumed by the gate; current path configuration is not fully centralized. Do not rely on an unverified HALT file.
+Inspect/reconcile before any intentional `halt --clear`. CLI, legacy risk gate and durable simulator now use one HALT resolver. The standard path follows `DESK_DATA_DIR`; custom paths come from the selected `--risk` config. Verify the resolved file in the intended profile before relying on it.
 
 Target external-execution procedure:
 

@@ -51,7 +51,24 @@ flowchart LR
 
 Current graph ends at a toy local book; it has no outbox/broker/reconciliation service. HALT blocks new risk and is not a flatten command.
 
-## 3. Evidence-gated phases
+## 3. Implemented portfolio and simulator paths
+
+```mermaid
+flowchart LR
+  DATA["Frozen inputs / approved model or explicit rules"] --> SCORE["Scores"]
+  SCORE --> ALLOC["Shared capped allocation + optional reductions"]
+  ALLOC --> TARGET["Immutable PortfolioTarget + cash + lineage"]
+  TARGET --> LEGACY["cycle / graph: shared decisions, legacy toy fills"]
+  TARGET --> PLAN["Fresh-mark rebalance plan"]
+  PLAN --> APPROVE["Local per-order approval + atomic reservation"]
+  APPROVE --> PAPER["Internal partial fills / sells / fees / sessions"]
+  PAPER --> EVENT["Transactional ledger events"]
+  DATA --> REPORT["Read-only research HTML"]
+```
+
+The internal simulator is not a broker adapter. Its local reviewer string is not authentication, and manually supplied marks/fills are not a venue feed. Cash preservation and shared allocation do not prove backtest/execution equivalence. The original packaged PDFs predate this implementation update; the Markdown capability register is the current source of truth.
+
+## 4. Evidence-gated phases
 
 ```mermaid
 flowchart TB
@@ -69,7 +86,7 @@ flowchart TB
 
 Calendar windows are minimum operating observations, not proof of alpha. Failed research does not bar simulator engineering; it bars real model/live admission. Phase 5 has a 30-day operational evidence floor, plus restore/rollback drills.
 
-## 4. State ownership
+## 5. State ownership
 
 ```mermaid
 flowchart LR
@@ -86,7 +103,7 @@ flowchart LR
 
 Checkpoint recovery does not authorize a new economic effect. Rebuildable indexes cannot replace a ledger. Outcome updates cannot rewrite the entry situation.
 
-## 5. Test pyramid
+## 6. Test pyramid
 
 ```mermaid
 flowchart BT

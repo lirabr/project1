@@ -1,0 +1,2 @@
+[console_scripts]
+desk-research = desk.cli:main

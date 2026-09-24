@@ -17,7 +17,9 @@ uv run --no-sync desk-research heartbeat
 
 These are diagnostic commands, not an automated scheduler. The default equity panel has no BTC/ETH rows, so heartbeat reports `no_data`; that is expected, **not proof of a quiet market**. In a separate crypto-data shell, it examines the last daily feature row. Polling it every minute cannot create intraday observations. `fire_full_cycle=false` says nothing about service health or freshness.
 
-Current PSI can miss distribution tails and does not reliably consume all YAML thresholds. Current vectors normalize mixed-scale raw features; current retrieval lacks historical outcome availability filters. Treat these outputs as prototypes, not certified adaptation.
+Current PSI can miss distribution tails and does not reliably consume all YAML thresholds. Vectors still normalize mixed-scale raw features. The shared decision service now filters both text/vector candidates against stored entry/exit times and excludes open/future lessons, but raw memory search is exploratory and the original vector/outcome semantics remain incomplete. Treat these outputs as prototypes, not certified adaptation.
+
+Bull/Bear outputs now include structured feature evidence, missing-value flags, timestamps and model/data identities. The default allocator remains capped equal weight; inverse volatility and explicit regime reductions are optional comparative experiments. `sentiment.analyze_news()` adds a disabled shadow-only callback boundary with availability and request/cost checks. It has no connected provider and never changes numeric decisions. A static HTML report replaces the need for a trading-enabled dashboard. Provider integration, empirical benefit and billed-spend controls remain admission work.
 
 ## 2. Correct the memory data model
 

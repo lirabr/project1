@@ -1,0 +1,36 @@
+regime:
+  vol_calm: 0.010
+  vol_high: 0.020
+  trend_up: 0.04
+  trend_down: -0.04
+
+trust:
+  min: 0.35
+  max: 1.80
+  step_win: 0.05
+  step_loss: 0.08
+  start:
+    model: 1.0
+    bull: 1.0
+    bear: 1.0
+
+vectors:
+  enabled: true
+  k: 3
+
+drift:
+  psi_alert: 0.20
+  psi_retrain: 0.25
+  lookback_rows: 60
+  reference_path: data/artifacts/feature_reference.yaml
+
+heartbeat:
+  symbols: [BTC-USD, ETH-USD]
+  # Fire a full council if |1d return| exceeds this many 20d-vol units
+  shock_sigma: 2.0
+  volume_z: 2.5
+  poll_seconds: 60
+
+policy:
+  path: configs/policy.md
+  pending_path: data/artifacts/policy_pending.md

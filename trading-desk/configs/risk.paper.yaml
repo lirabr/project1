@@ -1,0 +1,13 @@
+allow_live: false
+require_human_approve: true
+max_notional_per_name_usd: 2000
+max_gross_exposure_usd: 10000
+max_name_weight: 0.25
+max_daily_loss_usd: 250
+max_orders_per_cycle: 4
+max_crypto_weight: 0.30
+min_score: 0.55
+min_bars: 60
+allowed_sides: [long, flat]
+# Kill switch file: if this path exists, every proposal is rejected.
+kill_switch_path: data/artifacts/HALT

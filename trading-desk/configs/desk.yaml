@@ -1,0 +1,36 @@
+mode: paper
+focus:
+  - SPY
+  - QQQ
+  - AAPL
+  - MSFT
+  - NVDA
+# Phase 1 strategy whose scores the model-signal agent prefers.
+# Falls back to sma_cross rules if no OOS scores exist.
+preferred_strategy: hgb_tab
+fallback_strategy: sma_cross
+inference_mode: rules
+approved_model_id: ""
+max_bar_age_days: 7
+max_model_age_days: 90
+max_proposals_per_cycle: 3
+retrieve_k: 3
+allocation:
+  method: equal
+  exposure_scale: 1.0
+  regime_scales: {}
+llm:
+  enabled: false
+  # OpenAI-compatible. Example xAI: https://api.x.ai/v1
+  base_url: https://api.x.ai/v1
+  model: grok-4
+  timeout_s: 45
+news_sentiment:
+  enabled: false
+  max_articles: 5
+  max_cost_usd: 0.10
+  max_call_cost_usd: 0.02
+paper:
+  starting_cash: 100000
+  mark_to: close
+  auto_submit: false

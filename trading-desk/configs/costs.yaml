@@ -1,0 +1,13 @@
+# Conservative retail-ish costs. Better to overstate than to fake alpha.
+equity:
+  commission_bps: 1.0
+  slippage_bps: 5.0
+  spread_bps: 2.0
+crypto:
+  commission_bps: 8.0
+  slippage_bps: 10.0
+  spread_bps: 6.0
+# Applied on each notional traded (entry and exit).
+# total_cost_bps ≈ commission + slippage + 0.5 * spread, each way
+fill: next_open
+allow_short: false

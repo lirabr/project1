@@ -1,0 +1,15 @@
+train_years: 3
+test_months: 6
+step_months: 6
+embargo_days: 5
+min_train_rows: 250
+label_horizon_days: 5
+# Classifier goes long when predicted P(up) >= threshold, else flat.
+long_threshold: 0.55
+initial_capital: 100000
+max_name_weight: 0.25
+vol_target_annual: 0.12
+allocation:
+  method: equal
+  exposure_scale: 1.0
+  regime_scales: {}

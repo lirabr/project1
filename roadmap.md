@@ -19,6 +19,18 @@ No start date, weekly capacity, budget, venue eligibility, or independent review
 
 Observation windows are **minimum operating-policy gates**, not statistical proof of profit or completion estimates. Twenty sessions need not contain an unusual market event: supplement observed sessions with dated historical shock replay and outage injection. Do not claim a simulated shock was observed live. Extend observation if reliability or statistical evidence is insufficient. No need to manufacture orders to satisfy a count.
 
+## Portfolio-first implementation update
+
+The FinRL-X review was used to improve interfaces without importing its package or assuming its performance claims. The current starter now includes:
+
+- Phase 1 foundations: content-addressed data/model artifacts; optional supplied sessions and dated membership; explicit approved inference; versioned research runs; costs applied to benchmarks; exposure/cash, matched-exposure, fold-dispersion and cost-stress reports.
+- Phase 2 foundations: shared `PortfolioTarget` and direct/graph decision service; deterministic allocation and fresh-mark rebalancing; a separate durable internal order/ledger CLI with partial buys/sells, fees, session/cashflow accounting, reservations, idempotency and transactional events.
+- Phase 3 foundations: structured Bull/Bear evidence, decision-time lesson filtering, optional exposure reductions, and a disabled shadow-sentiment callback boundary. The HTML report is read-only.
+
+Implementation is **not phase admission**. Still required: independent full-accounting/corporate-action parity, authentic PIT data/calendars, holdout and trial evidence, safe immutable outcomes/vectors, authenticated/revocable approvals, broker reconciliation, prospective observation and independent review. Existing minimum observation windows are unchanged.
+
+Next work follows those gaps, not more agent count: validate research/ledger semantics → prospective internal paper → measured challenger experiments → broker-paper adapter/certification. Minimum-variance/RL allocators, connected news providers, interactive dashboards and external execution remain deferred behind evidence and integration gates. No live flag was enabled and no dependency was added.
+
 ## Work sequencing and permitted parallel work
 
 Critical path: data/clock correctness → research → marked ledger → risk → durable execution/reconciliation → broker paper → optional live → governed operations.
@@ -46,4 +58,4 @@ Review: outstanding P0/P1 items; fresh evidence; changes to source/config/data; 
 
 Promotion and completion are distinct: phase tooling may be complete with no approved model. Every gate has four possible results: PASS, FAIL, BLOCKED, or NOT APPLICABLE with an explicit reason. Only PASS permits the dependent capability. Reopening a P0 sends the affected capability back to its earlier phase.
 
-The phase guides contain commands that exist today and clearly labelled work that must be built. There is no hidden `deploy`, `train`, `reconcile`, or live-submit command in the current CLI.
+The phase guides contain commands that exist today and clearly labelled work that must be built. The CLI now exposes `train`, `approve-model`, `portfolio`, `paper`, and `report`; none is a hidden broker integration. There is still no `deploy`, broker `reconcile`, or live-submit command.

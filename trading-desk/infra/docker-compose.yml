@@ -1,0 +1,36 @@
+# Local data plane for Phase 0+. Paper-only; nothing here contacts a broker.
+# Start:  docker compose -f infra/docker-compose.yml up -d
+# Status: docker compose -f infra/docker-compose.yml ps
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: desk-timescale
+    restart: unless-stopped
+    ports:
+      - "5432:5432"        # if 5432 is taken, use "5433:5432" and update DATABASE_URL
+    environment:
+      POSTGRES_USER: desk
+      POSTGRES_PASSWORD: desk
+      POSTGRES_DB: trading_desk
+      TIMESCALEDB_TELEMETRY: "off"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U desk -d trading_desk"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: desk-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1"]
+    volumes:
+      - redis_data:/data
+
+volumes:
+  timescale_data:
+  redis_data:

@@ -1,0 +1,13 @@
+# Phase 4 — default is OFF. Flip these only after a messy paper week.
+enabled: false
+venue: alpaca
+# Must match the env var DESK_LIVE_CONFIRM exactly.
+confirm_phrase: I_UNDERSTAND_TINY_LIVE
+max_live_notional_usd: 250
+max_live_gross_usd: 500
+max_live_orders_per_day: 2
+equities_only: true
+withdraw_disabled_attested: false
+audit_path: data/artifacts/audit.jsonl
+audit_copy_path: data/artifacts/audit.copy.jsonl
+require_preflight: true
