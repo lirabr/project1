@@ -89,6 +89,20 @@ These are full admission gates, not skipped green tests. New local foundations c
 
 Record requirement/phase, PASS/FAIL/BLOCKED, release and lock hashes, data/model/policy IDs, command/scenario, expected positive and forbidden effects, actual result, timestamps, reviewer and unresolved exceptions. Include negative results and incident links. Do not record secrets, full private account identifiers or unnecessary personal information.
 
+## PDF export verification
+
+The PDF exporter is separate from application dependencies. Use an isolated Python environment with `PyMuPDF==1.26.7`, Node/npm and an installed Chrome/Chromium executable. Set `CHROME_PATH` if Chrome is not at the default macOS application path. The exporter installs its pinned `mermaid@11.4.1` and `puppeteer-core@24.16.0` packages in a temporary build directory; dependency acquisition needs network access, while page rendering blocks HTTP requests.
+
+From the outer pack, with `python` pointing to that isolated environment:
+
+```bash
+python -B -m unittest discover -s tools -p 'test_render_visual_pdf.py'
+python -B tools/render_visual_pdf.py
+python -B tools/render_visual_pdf.py --overview
+```
+
+The first export refreshes `Trading-Desk-v3-Visual-Guide.pdf`; `--overview` refreshes `Trading-Desk-v3-Project-Overview.pdf`. Regression tests cover the current named architecture diagrams, implemented capability summaries and independence from the separate setup folder. Export validation checks layout overflow, diagram font size, page count, searchable titles and text bounds, then prints a directory of PNG previews for visual review. These are documentation checks, not application or broker certification. The standalone setup guide is not a PDF build dependency.
+
 ## Verification boundaries
 
 This pack is verified offline on the local macOS environment. Linux CI is configured but has not been executed here. Market-data network availability, live or paper venue integration, optional MLflow UI/provider calls, Docker services, Mermaid rendering and Phase 5 infrastructure are not validated by these unit tests. They require their own phase evidence; no claimed green status is inferred.

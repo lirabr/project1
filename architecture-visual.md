@@ -66,7 +66,7 @@ flowchart LR
   DATA --> REPORT["Read-only research HTML"]
 ```
 
-The internal simulator is not a broker adapter. Its local reviewer string is not authentication, and manually supplied marks/fills are not a venue feed. Cash preservation and shared allocation do not prove backtest/execution equivalence. The original packaged PDFs predate this implementation update; the Markdown capability register is the current source of truth.
+The internal simulator is not a broker adapter. Its local reviewer string is not authentication, and manually supplied marks/fills are not a venue feed. Cash preservation and shared allocation do not prove backtest/execution equivalence. The PDF exports summarize these implemented foundations; the Markdown capability register remains the current source of truth.
 
 ## 4. Evidence-gated phases
 
